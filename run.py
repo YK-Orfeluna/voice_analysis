@@ -30,6 +30,7 @@ def get_args():
     ### power options
     parser.add_argument("--power_period", type=int, default=5, \
         help="Frame period for computing voice power; default is '5' [millsec.]")
+    parser.add_argument("--power_type", default="rms", choices=("rms", "db"))
     ### demo
     parser.add_argument("--demo", action="store_true", default=False, \
         help="If activate, demo will be displayed.")
@@ -72,7 +73,10 @@ def Power(data, rate):
     while i<data.shape[0]:
         rslt.append(np.sqrt(np.mean(data[i: i+length].astype(np.float32)**2)))
         i += length
-    return np.array(rslt, dtype=np.float32)
+    rslt = np.array(rslt, dtype=np.float32)
+    if args.power_type=="db":
+        rslt = np.log10(rslt) * 20
+    return rslt
 
 def compute_stats(data):
     mean = np.mean(data)    # 平均値
@@ -119,7 +123,7 @@ def demo(inf=None):
     plt.subplot(326)
     plt.plot(power, color="orange")
     plt.title("power")
-    plt.ylabel("[RMS]")
+    plt.ylabel("[RMS]" if args.power_type=="rms" else "[dB]")
     plt.tight_layout()
     plt.show()
     fig.savefig("demo.png", dpi=300)
