@@ -126,7 +126,10 @@ def demo(inf=None):
     plt.ylabel("[RMS]" if args.power_type=="rms" else "[dB]")
     plt.tight_layout()
     plt.show()
-    fig.savefig("demo.png", dpi=300)
+    outf = "%s/demo.png" %args.outd
+    fig.savefig(outf, dpi=300)
+    print("%s is saved." %outf)
+    return 0
 
 def analysis(infs):
     for inf in tqdm(infs):
