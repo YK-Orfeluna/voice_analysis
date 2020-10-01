@@ -9,6 +9,7 @@ from scipy.io import wavfile
 import webrtcvad
 import pysptk
 import pyreaper
+from tqdm import tqdm
 import matplotlib.pyplot as plt
 
 from pdb import set_trace
@@ -52,7 +53,7 @@ def VAD(data, rate):
         i += length
         if i==data.shape[0]:
             break
-        elif i>data.shape[0]:
+        elif i+length>data.shape[0]:
             _rslt = [vad.is_speech(data[-length: ].tobytes(), rate)] * int((i-length) / 1000 * rate)
             rslt.append(vad.is_speech(data[-length: ].tobytes(), rate))
             if rslt[-1]:
@@ -89,7 +90,7 @@ def compute_stats(data):
     iqr = q75 - q25    # 四分位範囲
     skew = stats.skew(data)    # 尤度
     kurtosis = stats.kurtosis(data)    # 尖度
-    return mean, var, median, mode, mode_cnt, vmin, vmax, q75, q25, iqr, skew, kurtosis
+    return mean, var, median, mode[0], mode_cnt[0]/data.shape[0], vmin, vmax, q75, q25, iqr, skew, kurtosis
 
 def demo(inf=None):
     if inf is None:
@@ -131,14 +132,27 @@ def demo(inf=None):
     print("%s is saved." %outf)
     return 0
 
+header="filename\tmean\tvariance\tmedian\tmode\tmode_ratio\tmin\tmax\tq75\tq25\tIQR\tskew\tkurtosis\n"
 def analysis(infs):
+    f0_out = header
+    power_out = header
     for inf in tqdm(infs):
         rate, data = wavfile.read(inf)
         assert rate in (8000, 16000, 32000, 48000), "py-webrtcvad corresponds to {8000, 16000, 32000, 48000} Hz. Your input is %s Hz." %rate
         vad_wav, _ = VAD(data, rate)
         f0 = F0(data, rate)
         f0 = f0[f0>-1]
+        f0_stats = compute_stats(f0)
+        f0_out += inf+"\t"+"\t".join(map(str, f0_stats))+"\n"
         power = Power(data, rate)
+        power_stats = compute_stats(power)
+        power_out  += inf+"\t"+"\t".join(map(str, power_stats))+"\n"
+    for name, out in zip(("f0", "power"), (f0_out, power_out)):
+        outf = "%s/%s.tsv" %(args.outd, name)
+        with open(outf, "w") as fd:
+            fd.write(out)
+        print("%s is saved." %args.outd)
+    return 0
 
 def main():
     if args.demo:
@@ -149,9 +163,7 @@ def main():
     if args.demo_index>=0:
         demo(infs[args.demo_index])
         return 0
-    for inf in tqdm(infs):
-        rate, data = wavfile.read(inf)
-        assert rate in (8000, 16000, 32000, 48000), "py-webrtcvad corresponds to {8000, 16000, 32000, 48000} Hz. Your input is %s Hz." %rate
+    analysis(infs)
 
 if __name__=="__main__":
     args = get_args()
