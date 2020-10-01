@@ -68,6 +68,7 @@
 ### デモ
 
 - 下記のような図が作成される
+  - 実行コマンド: `python VoiceAnalysis.py hoge demo --vad_mode 3 --f0_period 10 --power_period 10 --demo`
 - 左上：オリジナルの音声波形
 - 左下：VADの結果
 - 右上：VAD後の音声波形
