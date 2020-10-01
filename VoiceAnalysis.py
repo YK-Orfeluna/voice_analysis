@@ -6,11 +6,20 @@ from os.path import basename, splitext
 import numpy as np
 from scipy import stats
 from scipy.io import wavfile
-import webrtcvad
-import pysptk
-import pyreaper
 from tqdm import tqdm
 import matplotlib.pyplot as plt
+try:
+    import webrtcvad
+except ImportError:
+    exit("Import Error: You have to install 'py-webrtcvad'.\nTo run 'pip install webrtcvad'.")
+try:
+    import pysptk
+except ImportError:
+    exit("Import Error: You have to install 'pysptk'.\nTo run 'pip install pysptk'.")
+try:
+    import pyreaper
+except ImportError:
+    exit("Import Error: You have to install 'pyreaper'.\nTo run 'pip install pyreaper'.")
 
 from pdb import set_trace
 
