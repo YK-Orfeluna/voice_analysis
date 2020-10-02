@@ -143,12 +143,14 @@ def demo(inf=None):
 
 header="filename\tmean\tvariance\tmedian\tmode\tmode_ratio\tmin\tmax\tq75\tq25\tIQR\tskew\tkurtosis\n"
 def analysis(infs):
+    vad_length = "speech_length[sec.]\n"
     f0_out = header
     power_out = header
     for inf in tqdm(infs):
         rate, data = wavfile.read(inf)
         assert rate in (8000, 16000, 32000, 48000), "py-webrtcvad corresponds to {8000, 16000, 32000, 48000} Hz. Your input is %s Hz." %rate
         vad_wav, _ = VAD(data, rate)
+        vad_length += "%s\n" %(vad_wav.shape[0] / rate)
         f0 = F0(data, rate)
         f0 = f0[f0>-1]
         f0_stats = compute_stats(f0)
@@ -156,11 +158,11 @@ def analysis(infs):
         power = Power(data, rate)
         power_stats = compute_stats(power)
         power_out  += inf+"\t"+"\t".join(map(str, power_stats))+"\n"
-    for name, out in zip(("f0", "power"), (f0_out, power_out)):
+    for name, out in zip(("f0", "power", "speech_length"), (f0_out, power_out, vad_length)):
         outf = "%s/%s.tsv" %(args.outd, name)
         with open(outf, "w") as fd:
             fd.write(out)
-        print("%s is saved." %args.outd)
+        print("%s is saved." %outf)
     return 0
 
 def main():
