@@ -31,15 +31,15 @@ def get_args():
     parser.add_argument("--vad_mode", type=int, choices=(0, 1, 2, 3), default=1, \
         help="To see py-webrtcvad's document; default is '1'.")
     parser.add_argument("--vad_frame_duration", type=int, choices=(10, 20, 30), default=10, \
-        help="To see py-webrtcvad's document; default is '10' [millsec.]")
+        help="To see py-webrtcvad's document; default is '10'[ms].")
     ### F0 options
     parser.add_argument("--f0_range", type=float, default=(40.0, 500.0), nargs=2, \
         help="To see pyreaper's document; default is '(40.0, 500.0)'.")
     parser.add_argument("--f0_period", type=int, default=5, \
-        help="To see pyreaper's dotument; default is '5' [millsec.]")
+        help="To see pyreaper's dotument; default is '5'[ms].")
     ### power options
     parser.add_argument("--power_period", type=int, default=5, \
-        help="Frame period for computing voice power; default is '5' [millsec.]")
+        help="Frame period for computing voice power; default is '5'[ms].")
     parser.add_argument("--power_type", default="rms", choices=("rms", "db"))
     ### demo
     parser.add_argument("--demo", action="store_true", default=False, \
