@@ -29,7 +29,7 @@ def main():
     print("Now converting...")
     for inf in inlist:
         outf = "%s/%s.wav" %(args.outd, splitext(basename(inf))[0])
-        if splitext(inf)[1].lower()==".wav":
+        if splitext(inf)[1].lower() in (".wav", ".aiff", ".aifc"):
             cmd = ["sox", \
                 inf, \
                 "-r", args.out_sampling_rate, "-b", "16", "-e", "signed-integer", "-c", "1", outf\
