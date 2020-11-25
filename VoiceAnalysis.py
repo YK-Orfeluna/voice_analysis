@@ -180,7 +180,7 @@ def analysis(infs):
     for inf in tqdm(infs):
         rate, data = read_file(inf)
         vad_wav, _ = VAD(data, rate)
-        vad_length += "%s\n" %(vad_wav.shape[0] / rate)
+        vad_length += "%s\t%s\n" %(inf, vad_wav.shape[0] / rate)
         f0 = F0(vad_wav, rate)
         f0 = f0[f0>-1]
         f0_stats = compute_stats(f0)
