@@ -196,16 +196,21 @@ def analysis(infs):
     return 0
 
 def main():
-    with open(args.inlist) as fd:
-        infs = sorted(fd.read().strip().split("\n"))
+    asser min(args.f0_range)>0, "minimum value of $f0_range should be higher than 0"
+    try:
+        with open(args.inlist) as fd:
+            infs = sorted(fd.read().strip().split("\n"))
+    except FileNotFoundError:
+        infs = None
     if args.demo:
-        if args.demo_index==-1:
+        if args.demo_index==-1 or infs is None:
             inf = None
         else:
             inf = infs[args.demo_index]
         demo(inf)
         return 0
     else:
+        assert infs is not None, "%s is not founded." %args.inlist
         analysis(infs)
 
 if __name__=="__main__":
